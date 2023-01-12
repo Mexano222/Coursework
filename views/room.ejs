@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Discocrd</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script>
+        const ROOM_ID = "<%= roomId %>";
+    </script>
+</head>
+
+<body>
+    <header>
+        <a href="/" title="Home">
+            <div class="logo">
+                <h3>Discocrd</h2>
+            </div>
+        </a>
+    </header>
+
+    <div class="page">
+        <div class="main-view">
+            <div class="video-wrapper">
+                <div id="videos">
+
+                </div>
+            </div>
+            <div class="controls">
+                <button id="muteVideo">
+                    muteVideo
+                </button>
+                <button id="muteAudio">
+                    muteAudio
+                </button>
+                <button id="inviteUser">
+                    invite
+                </button>
+            </div>
+        </div>
+        <div class="main-chat">
+            <div class="messages-wrapper">
+                <div id="messages">
+
+                </div>
+            </div>
+            <form id="form-message" action="">
+                <input id="input-message" autocomplete="off">
+                <button> send </button>
+            </form>
+        </div>
+    </div>
+    <script src="chat.js"></script>
+    <script src="video.js"></script>
+</body>
+
+</html>
