@@ -26,7 +26,7 @@ export default {
   methods: {
     joinRoom(username, roomId) {
       this.username = username;
-      router.push({name:'room', params:{roomId:roomId}});
+      router.push({ name: 'room', params: { roomId: roomId } });
     }
 
   }

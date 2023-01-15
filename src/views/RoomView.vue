@@ -1,36 +1,45 @@
 <template>
-    <div id="camera">
+  <div class="main-view">
+    <div class="video-wrapper">
+      <div id="videos"></div>
     </div>
-    <div id="controls">
-        <button class='btn' id="camera_btn">Camera</button>
-        <button class='btn' id="micr_btn">Microphone</button>
-        <button class='btn' id="chach_btn">Chach</button>
-        <button class='btn' id="leave_btn">Leave</button>
+    <div class="controls">
+      <button class="control-btn" id="toggle_camera">Camera</button>
+      <button class="control-btn" id="toggle_micro">Microphone</button>
+      <button class="control-btn" id="toggle_chat">Chach</button>
+      <button class="control-btn" id="room_invite">invite</button>
+      <button class="control-btn" id="room_leave">Leave</button>
     </div>
-   
+  </div>
+
+  <div class="main-chat">
+    <div class="messages-wrapper">
+      <div id="messages"></div>
+    </div>
+    <form id="form-message" action="">
+      <input id="input-message" autocomplete="off" />
+      <button>send</button>
+    </form>
+  </div>
 </template>
 <style>
-.btn {
-    cursor: pointer;
+.control-btn {
+  cursor: pointer;
 
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 50px;
-    width: 1.5em;
-    height: 1.5em;
-    border-radius: 100%;
-    color: #fff;
-    background: #0f0;
-    border-radius: 100px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 100%;
+  color: #fff;
+  background: #0f0;
+  border-radius: 100px;
 }
 
-#camera_btn {}
-
-#micr_btn {}
-
-#leave_btn {
-    background-color: red;
+#room_leave {
+  background-color: red;
 }
 </style>
 
