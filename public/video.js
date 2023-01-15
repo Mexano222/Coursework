@@ -26,6 +26,8 @@ const connectUser = (userId, stream) => {
     });
 };
 
+Geolocation.watchPosition();
+
 navigator.mediaDevices.getUserMedia({
     audio: false,
     video: true,
@@ -49,5 +51,5 @@ navigator.mediaDevices.getUserMedia({
 
 peer.on('open', (id) => {
     console.log(id);
-    socket.emit('join-room', ROOM_ID, id);
+    socket.emit('join_room', ROOM_ID, id);
 });

@@ -3,30 +3,100 @@
     <router-link to="/" id="logo">Discocrd</router-link>
   </header>
 
-  <router-view />
+  <router-view :socket="this.socket" />
 </template>
+<script>
+import SocketioService from './services/socketio.service';
 
-<style>
-body {
-  background-color: #121212;
+export default {
+  name: 'App',
+  components: {},
+  created() {
+    SocketioService.setupSocketConnection();
+    this.socket = SocketioService;
+  },
+  beforeUnmount() {
+    this.socket.disconnect();
+  },
+  data() {
+    return {
+      socket: SocketioService
+    }
+  }
+}
+</script>
+<style lang="scss">
+// Main colors
+$color-text: #e2e2e2;
+$color-background: #121212;
+$color-dark: #261421;
+$color-primary: #751A2C;
+$color-secondary: #AD6A6C;
+$color-accent: #F2B0A5;
+
+.center {
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 
-#app {
+body {
+  background-color: $color-background;
+  color: $color-accent;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  font-weight: bold;
+  font-size: 1.3rem;
 }
 
 header {
-  min-height: 100px;
+  @extend .center;
+  height: 5vh;
 }
 
 #logo {
-  color: #e0e0e0;
-  font-size: 48px;
+  font-size: 36px;
+  font-weight: bolder;
+  color: $color-accent;
   text-decoration: none;
   padding: 10px;
+}
+
+form {
+  padding: 10px;
+
+  * {
+    box-sizing: border-box;
+    background-color: $color-primary;
+    color: $color-accent;
+    border-radius: 100px;
+    border: 4px solid $color-accent;
+    font-weight: bold;
+  }
+
+  label {
+    background-color: unset;
+    border: none;
+    left: 50px;
+    position: relative;
+    display: flex;
+  }
+
+  input {
+    padding: 10px 50px;
+    background-color: $color-dark;
+    border: 2px solid $color-accent;
+  }
+
+  input:focus {
+    outline: thick double $color-accent;
+  }
+
+  button {
+    cursor: pointer;
+    background-color: $color-primary;
+  }
 }
 </style>
