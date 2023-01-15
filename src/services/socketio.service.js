@@ -24,8 +24,8 @@ class SocketioService {
 
     sendMessage(username, message) {
         this.socket.emit('send_message', username, message);
-        this.socket.on('load_message', (data) => {
-            console.log(data);
+        this.socket.on('load_message', (username, message) => {
+            console.log(username, message);
         });
     }
 

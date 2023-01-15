@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
         console.log("User [" + socket.id + "] " + username + " connected to room " + roomId)
 
         socket.on('send_message', (message) => {
-            io.to(roomId).emit('load_message', `server: ${message}`);
+            io.to(roomId).emit('load_message', username, message);
         });
     });
 });
