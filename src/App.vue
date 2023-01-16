@@ -49,6 +49,13 @@ body {
   text-align: center;
   font-weight: bold;
   font-size: 1.3rem;
+
+ // overflow: hidden;
+}
+
+#app {
+  margin: 0;
+  padding: 0;
 }
 
 header {
