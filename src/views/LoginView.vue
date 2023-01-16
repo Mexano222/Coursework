@@ -7,7 +7,7 @@
       <label for="room_id">Room ID</label>
       <input type="text" placeholder="Enter room id" v-model="roomId" id="room_id">
 
-      <button @click="joinRoom(username, roomId)" id="join_btn">Join</button>
+      <button @click="joinRoom" id="join_btn">Join</button>
     </form>
   </div>
 </template>
@@ -15,6 +15,7 @@
 
 <script>
 import router from '@/router';
+import { v4 as uuidv4 } from 'uuid'
 
 export default {
   created() {
@@ -28,16 +29,16 @@ export default {
     }
   },
   methods: {
-    joinRoom(username, roomId) {
+    joinRoom() {
       if (!this.username) {
         return
       }
       if (!this.roomId) {
-        return
+        console.log(uuidv4())
+        this.roomId = uuidv4()
       }
-      this.username = username;
-      this.socket.joinRoom(username, roomId)
-      router.push({ name: 'room', params: { roomId: roomId } });
+      this.socket.joinRoom(this.username, this.roomId)
+      router.push({ name: 'room', params: { roomId: this.roomId } });
     }
   }
 }

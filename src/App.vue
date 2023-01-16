@@ -50,7 +50,7 @@ body {
   font-weight: bold;
   font-size: 1.3rem;
 
- // overflow: hidden;
+  // overflow: hidden;
 }
 
 #app {
@@ -61,6 +61,10 @@ body {
 header {
   @extend .center;
   height: 5vh;
+  background-color: $color-dark;
+  border-bottom: 2px solid;
+  box-sizing: border-box;
+
 }
 
 #logo {

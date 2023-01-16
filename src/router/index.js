@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createMemoryHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import RoomView from '../views/RoomView.vue'
 
@@ -18,8 +18,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes
+  history: createMemoryHistory(),
+  routes,
 })
 
 export default router

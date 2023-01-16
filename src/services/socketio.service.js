@@ -22,11 +22,19 @@ class SocketioService {
         }
     }
 
-    sendMessage(username, message) {
-        this.socket.emit('send_message', username, message);
+    subscribeToMessages(cb) {
+        if (!this.socket) {
+            return false;
+        }
         this.socket.on('load_message', (username, message) => {
-            console.log(username, message);
+            return cb(username, message);
         });
+    }
+
+    sendMessage(message, roomId) {
+        if (this.socket) {
+            this.socket.emit('send_message', message, roomId, (cb) => { });
+        }
     }
 
 }

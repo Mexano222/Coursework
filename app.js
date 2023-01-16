@@ -13,6 +13,7 @@ const siofu = require('socketio-file-upload')
 var fs = require('fs')
 
 const { ExpressPeerServer } = require('peer');
+const { callbackify } = require('util');
 const peerServer = ExpressPeerServer(http, {
     debug: true
 });
@@ -23,14 +24,6 @@ app.use('/node_modules', express.static(__dirname + '/node_modules/'))
 app.use(express.static('public'));
 app.use(siofu.router);
 
-app.get('/', (req, res) => {
-    res.redirect(`/room/${uuidv4()}`);
-});
-
-app.get('/:room', (req, res) => {
-    res.render('room', { roomId: req.params.room });
-});
-
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => {
@@ -39,12 +32,18 @@ io.on('connection', (socket) => {
 
     socket.on('join_room', (username, roomId) => {
         socket.join(roomId);
-        // socket.to(roomId).emit('connect-user', userId);
-        console.log("User [" + socket.id + "] " + username + " connected to room " + roomId)
+        socket.username = username;
+        console.log("User [" + socket.id + "] " + socket.username + " connected to room " + roomId)
 
-        socket.on('send_message', (message) => {
-            io.to(roomId).emit('load_message', username, message);
-        });
+        // socket.to(roomId).emit('connect-user', userId);
+    });
+
+    socket.on('leave_room', (roomId) => {
+        socket.leave(roomId);
+    });
+
+    socket.on('send_message', (message, roomId) => {
+        io.to(roomId).emit('load_message', { username: socket.username, message: message });
     });
 });
 
