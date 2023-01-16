@@ -1,9 +1,10 @@
 <template>
   <div class="video-wrapper">
-    <div class="cam-wrapper" v-for="user in users" :key="user.name"
-         :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(Math.max(users.length, 2))) + ')' }">
+    <div class="cam-wrapper" v-for="video in videos" :key="video"
+         :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(Math.max(videos.length, 2))) + ')' }">
       <div class="user-cam">
-        <label>{{ user.name }}</label>
+        <label>{{ video.username }}</label>
+        <video v-if="video.stream"></video>
       </div>
     </div>
   </div>
@@ -11,23 +12,39 @@
 
 <script>
 export default {
+  props: ['username', 'peer'],
   data() {
     return {
-      users: [
-        { name: "123" },
-        { name: "123" },
-        { name: "123" },
-        { name: "123" },
-        { name: "123" },
-        { name: "123" },
-        { name: "123" },
-        { name: "123" },
-      ],
+      videos: []
     }
   },
   mounted() {
-    console.log(this.$parent.roomId);
-  }
+    this.peer.setupPeerConnection(this.socket)
+    console.log(this.username)
+    this.videos.push({
+      username: this.username,
+      stream: new MediaStream()
+    });
+
+
+    // this.peer.getMedia({
+    //   audio: false,
+    //   video: false,
+    // }).then((stream) => {
+    //   this.videos.push({
+    //     username: this.username,
+    //     stream: stream
+    //   });
+    //   // this.myVideoStream = stream;
+
+    //   // this.peer.on('call', (call) => {
+    //   //   call.answer(stream);
+    //   //   call.on('stream', (userVideoStream) => {
+    //   //     // addVideoStream(video, userVideoStream);
+    //   //   });
+    //   // });
+    // });
+  },
 }
 </script>
 
@@ -55,10 +72,8 @@ export default {
 
   >* {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    bottom: 0;
+    display: flex;
   }
 }
 </style>

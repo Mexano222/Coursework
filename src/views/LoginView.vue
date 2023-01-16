@@ -2,7 +2,7 @@
   <div class="login">
     <form action="" id="login_form">
 
-      <label for="usename">Nickname</label>
+      <label for="username">Username</label>
       <input type="text" placeholder="Enter username" v-model="username" id="usename">
       <label for="room_id">Room ID</label>
       <input type="text" placeholder="Enter room id" v-model="roomId" id="room_id">
@@ -18,13 +18,11 @@ import router from '@/router';
 import { v4 as uuidv4 } from 'uuid'
 
 export default {
-  created() {
-    console.log(this.socket.getId())
-  },
   props: ['socket'],
   data() {
     return {
-      username: this.socket.getId(),
+      username: null,
+      myVideoStream: null,
       roomId: null
     }
   },
@@ -38,7 +36,7 @@ export default {
         this.roomId = uuidv4()
       }
       this.socket.joinRoom(this.username, this.roomId)
-      router.push({ name: 'room', params: { roomId: this.roomId } });
+      router.push({ name: 'room', params: { roomId: this.roomId, username: this.username } });
     }
   }
 }
@@ -46,6 +44,14 @@ export default {
 </script>
 
 <style lang="scss">
+// Main colors
+$color-text: #e2e2e2;
+$color-background: #121212;
+$color-dark: #261421;
+$color-primary: #751A2C;
+$color-secondary: #AD6A6C;
+$color-accent: #F2B0A5;
+
 input {
   width: 100%;
   display: grid;

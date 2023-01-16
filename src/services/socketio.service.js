@@ -31,6 +31,15 @@ class SocketioService {
         });
     }
 
+    subscribeToStream(cb) {
+        if (!this.socket) {
+            return false;
+        }
+        this.socket.on('connect_user', (username, stream) => {
+            return cb(username, stream);
+        });
+    }
+
     sendMessage(message, roomId) {
         if (this.socket) {
             this.socket.emit('send_message', message, roomId, (cb) => { });

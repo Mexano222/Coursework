@@ -10,7 +10,7 @@ const routes = [
     props: true
   },
   {
-    path: '/room/:roomId',
+    path: '/room/:roomId:username',
     name: 'room',
     component: RoomView,
     props: true

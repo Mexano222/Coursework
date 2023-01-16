@@ -1,10 +1,10 @@
 <template>
   <div class="app-wrapper">
     <div class="main-view">
-      <UserVideos />
+      <UserVideos :username="username" :peer="peer" />
 
       <div class="controls">
-        <button class="control-btn" id="toggle_camera" @click="isCameraToggle = !isCameraToggle"
+        <button class="control-btn" id="toggle_camera" @click="toggleCamera"
                 :class="{ active: isCameraToggle }">Camera</button>
         <button class="control-btn" id="toggle_micro" @click="isMicroToogle = !isMicroToogle"
                 :class="{ active: isMicroToogle }">Microphone</button>
@@ -15,34 +15,61 @@
       </div>
     </div>
 
-    <ChachItem :class="{ chach_visible: isChachToogle }" :roomId="roomId" />
+    <ChachItem v-if="isChachToogle" :roomId="roomId" />
   </div>
 
 </template>
 
 <script>
+import peer from '../services/peerjs.service';
 import UserVideos from '@/components/UserVideos.vue';
 import router from '@/router';
 
 export default {
-  props: ["socket", "roomId"],
+  props: ['socket', 'roomId', 'username'],
   data() {
     return {
+      peer: peer,
       isCameraToggle: false,
       isMicroToogle: false,
-      isChachToogle: false
+      isChachToogle: true
     };
   },
   methods: {
+    toggleCamera() {
+      this.isCameraToggle = !this.isCameraToggle
+      if (this.isCameraToggle) {
+        peer.getMedia({
+          video: this.isCameraToggle,
+        }).then((stream) => {
+          this.myVideoStream = stream;
+
+          peer.on('call', (call) => {
+            call.answer(stream);
+            call.on('stream', (userVideoStream) => {
+              // addVideoStream(video, userVideoStream);
+            });
+          });
+        });
+      }
+    },
     leave() {
-      router.push({ name: "login" });
+      router.push({ name: 'login' });
     }
   },
   components: { UserVideos }
 }
 </script>
 
-<style lang="scss">
+<style lang='scss'>
+// Main colors
+$color-text: #e2e2e2;
+$color-background: #121212;
+$color-dark: #261421;
+$color-primary: #751A2C;
+$color-secondary: #AD6A6C;
+$color-accent: #F2B0A5;
+
 .app-wrapper {
   display: flex;
   align-items: stretch;
@@ -76,24 +103,22 @@ export default {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 50px;
-  width: 1.5em;
-  height: 1.5em;
-  background: red;
+  width: 80px;
+  aspect-ratio: 1;
+  background: $color-dark;
   border-radius: 100px;
+  border: 2px solid $color-accent;
+  color: $color-accent;
   cursor: pointer;
 
-  &#room_invite {
-    background-color: #0f0;
+  &#room_invite,
+  &#room_leave {
+    background-color: $color-primary;
   }
 }
 
-#room_leave {
-  background-color: red;
-}
-
 .active {
-  background-color: #0f0;
+  background-color: $color-primary;
 }
 </style>
 
