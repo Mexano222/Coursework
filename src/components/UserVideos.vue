@@ -1,7 +1,7 @@
 <template>
   <div class="video-wrapper">
     <div class="cam-wrapper" v-for="video in videos" :key="video"
-         :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(Math.max(videos.length, 2))) + ')' }">
+      :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(videos.length)) + ')' }">
       <div class="user-cam">
         <label>{{ video.username }}</label>
         <video v-if="video.stream"></video>
@@ -15,7 +15,12 @@ export default {
   props: ['username', 'peer'],
   data() {
     return {
-      videos: []
+      videos: [
+        {username: 123},
+        {username: 123},
+        {username: 123},
+        {username: 123},
+      ]
     }
   },
   mounted() {
@@ -50,25 +55,31 @@ export default {
 
 <style lang="scss">
 .video-wrapper {
-  max-height: 95vh;
-  height: 100%;
+  height: 95vh;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cam-wrapper {
+  box-sizing: border-box;
+  border: 1px solid red;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.cam-wrapper {
-  flex-direction: column;
-}
-
 .user-cam {
   box-sizing: border-box;
-  width: 100%;
-  height: 0;
-  position: relative;
+  width: 1280px;
+  max-width: 100%;
+  max-height: 100%;
+  position: absolute;
   border: 1px solid #0f0;
-  padding-top: 56.25%;
+  aspect-ratio: 16/9;
 
   >* {
     position: absolute;

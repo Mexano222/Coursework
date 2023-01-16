@@ -5,17 +5,17 @@
 
       <div class="controls">
         <button class="control-btn" id="toggle_camera" @click="toggleCamera"
-                :class="{ active: isCameraToggle }">Camera</button>
+          :class="{ active: isCameraToggle }">Camera</button>
         <button class="control-btn" id="toggle_micro" @click="isMicroToogle = !isMicroToogle"
-                :class="{ active: isMicroToogle }">Microphone</button>
+          :class="{ active: isMicroToogle }">Microphone</button>
         <button class="control-btn" id="toggle_chat" @click="isChachToogle = !isChachToogle"
-                :class="{ active: isChachToogle }">Chach</button>
+          :class="{ active: isChachToogle }">Chach</button>
         <button class="control-btn" id="room_invite">Invite</button>
         <button class="control-btn" id="room_leave" @click="leave">Leave</button>
       </div>
     </div>
 
-    <ChachItem v-if="isChachToogle" :roomId="roomId" />
+    <ChachItem :class="{ hidden: !isChachToogle }" :roomId="roomId" />
   </div>
 
 </template>
@@ -87,7 +87,10 @@ $color-accent: #F2B0A5;
   }
 
   .main-chat {
+    height: 95vh;
     flex: 1;
+    min-width: 5%;
+    word-wrap: break-word;
 
     &.chach_visible {
       display: none;
@@ -100,6 +103,8 @@ $color-accent: #F2B0A5;
 }
 
 .control-btn {
+  box-sizing: border-box;
+
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -119,6 +124,10 @@ $color-accent: #F2B0A5;
 
 .active {
   background-color: $color-primary;
+}
+
+.hidden {
+  display: none;
 }
 </style>
 

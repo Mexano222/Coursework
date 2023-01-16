@@ -74,40 +74,4 @@ header {
   text-decoration: none;
   padding: 10px;
 }
-
-form {
-  padding: 10px;
-
-  * {
-    box-sizing: border-box;
-    background-color: $color-primary;
-    color: $color-accent;
-    border-radius: 100px;
-    border: 4px solid $color-accent;
-    font-weight: bold;
-  }
-
-  label {
-    background-color: unset;
-    border: none;
-    left: 50px;
-    position: relative;
-    display: flex;
-  }
-
-  input {
-    padding: 10px 50px;
-    background-color: $color-dark;
-    border: 2px solid $color-accent;
-  }
-
-  input:focus {
-    outline: thick double $color-accent;
-  }
-
-  button {
-    cursor: pointer;
-    background-color: $color-primary;
-  }
-}
 </style>
