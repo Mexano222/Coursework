@@ -1,7 +1,7 @@
 <template>
   <div class="video-wrapper">
     <div class="cam-wrapper" v-for="video in videos" :key="video.id"
-         :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(videos.length)) + ')' }">
+      :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(videos.length)) + ')' }">
       <div class="user-cam" @click="getVideos">
         <label>{{ video.username }}</label>
         <video v-if="video.stream" :srcObject.prop="video.stream" autoplay :muted="videos[0] === video" />
@@ -15,7 +15,10 @@ export default {
   props: ['username', 'peer'],
   data() {
     return {
-      videos: []
+      videos: [
+        { username: 123 },
+        { username: 123 },
+      ]
     }
   },
   mounted() {

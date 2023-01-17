@@ -2,16 +2,33 @@
   <div class="app-wrapper">
     <div class="main-view">
       <UserVideos :username="username" :peer="peer" />
-
       <div class="controls">
-        <button class="control-btn" id="toggle_camera" @click="toggleCamera"
-                :class="{ active: isCameraToggle }">Camera</button>
-        <button class="control-btn" id="toggle_micro" @click="toggleMicro"
-                :class="{ active: isMicroToogle }">Microphone</button>
+        <button class="control-btn" id="toggle_camera" @click="toggleCamera" :class="{ active: isCameraToggle }">
+          <div class="camera-btn">
+            <img src="../assets/camera.svg" alt="camera picture" height="64" width="64" viewBox="0 0 64 64">
+          </div>
+        </button>
+        <button class="control-btn" id="toggle_micro" @click="toggleMicro" :class="{ active: isMicroToogle }">
+          <div class="micro-btn">
+            <img src="../assets/microphone.svg" alt="micro picture" height="64" width="64" viewBox="0 0 64 64">
+          </div>
+        </button>
         <button class="control-btn" id="toggle_chat" @click="isChachToogle = !isChachToogle"
-                :class="{ active: isChachToogle }">Chach</button>
-        <button class="control-btn" id="room_invite">Invite</button>
-        <button class="control-btn" id="room_leave" @click="leave">Leave</button>
+          :class="{ active: isChachToogle }">
+          <div class="chach-btn">
+            <img src="../assets/chat.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
+          </div>
+        </button>
+        <button class="control-btn" id="room_invite">
+          <div class="invite-btn">
+            <img src="../assets/invite.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
+          </div>
+        </button>
+        <button class="control-btn" id="room_leave" @click="leave">
+          <div class="leave-btn">
+            <img src="../assets/leave.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
+          </div>
+        </button>
       </div>
     </div>
 
@@ -128,6 +145,9 @@ $color-accent: #F2B0A5;
 
 .controls {
   margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .control-btn {
@@ -156,6 +176,36 @@ $color-accent: #F2B0A5;
 
 .hidden {
   display: none;
+}
+
+.camera-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.micro-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chach-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.invite-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.leave-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
 
