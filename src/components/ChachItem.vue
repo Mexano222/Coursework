@@ -13,7 +13,11 @@
       </div>
       <form id="form-message" action="" @submit.prevent>
         <div id="input-message" placeholder="Message" contenteditable="true" ref="userInput"></div>
-        <button class="send_btn" @click="sendMessage">send</button>
+        <button class="send_btn" @click="sendMessage">
+          <div class="btn-send">
+            <img src="../assets/send.svg" alt="invite picture" height="54" width="54" viewBox="0 0 54 54">
+          </div>
+        </button>
       </form>
     </div>
   </div>
@@ -70,10 +74,25 @@ $color-dark: #261421;
 $color-primary: #751A2C;
 $color-secondary: #AD6A6C;
 $color-accent: #F2B0A5;
+::-webkit-scrollbar{
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: $color-primary; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $color-accent; 
+}
 
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $color-secondary; 
+}
 #form-message {
   display: flex;
-  overflow: auto;
+  //overflow: auto;
   max-height: 50%;
   box-sizing: border-box;
   background-color: $color-primary;
@@ -82,15 +101,24 @@ $color-accent: #F2B0A5;
   border: 4px solid $color-accent;
   font-weight: bold;
   margin: 10px;
+
+  align-items: center;
 }
 
 #input-message {
-  overflow: auto;
+  overflow-y: auto;
   max-height: 100%;
-  padding: 20px;
+  padding: 0 15px ;
+  margin: 15px 0;
   text-align: left;
   width: 100%;
+  box-sizing: border-box;
+  line-height: normal;
 }
+
+#input-message:focus {
+    outline: none;
+  }
 
 .send_btn {
   background-color: transparent;
@@ -123,5 +151,11 @@ $color-accent: #F2B0A5;
 
 .username {
   font-weight: bold;
+}
+
+.btn-send {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
