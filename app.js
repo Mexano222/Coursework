@@ -35,10 +35,11 @@ io.on('connection', (socket) => {
         socket.username = username;
         console.log("User [" + socket.id + "] " + socket.username + " connected to room " + roomId)
 
-        // socket.to(roomId).emit('connect-user', userId);
+        // socket.to(roomId).emit('connect-user-stream', userId);
     });
 
     socket.on('leave_room', (roomId) => {
+        console.log("User [" + socket.id + "] " + socket.username + " leave from room " + roomId)
         socket.leave(roomId);
     });
 

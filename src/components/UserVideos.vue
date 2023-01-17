@@ -1,10 +1,10 @@
 <template>
   <div class="video-wrapper">
-    <div class="cam-wrapper" v-for="video in videos" :key="video"
-      :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(videos.length)) + ')' }">
-      <div class="user-cam">
+    <div class="cam-wrapper" v-for="video in videos" :key="video.id"
+         :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(videos.length)) + ')' }">
+      <div class="user-cam" @click="getVideos">
         <label>{{ video.username }}</label>
-        <video v-if="video.stream"></video>
+        <video v-if="video.stream" :srcObject.prop="video.stream" autoplay :muted="videos[0] === video" />
       </div>
     </div>
   </div>
@@ -15,41 +15,20 @@ export default {
   props: ['username', 'peer'],
   data() {
     return {
-      videos: [
-        {username: 123},
-        {username: 123},
-        {username: 123},
-        {username: 123},
-      ]
+      videos: []
     }
   },
   mounted() {
     this.peer.setupPeerConnection(this.socket)
-    console.log(this.username)
-    this.videos.push({
-      username: this.username,
-      stream: new MediaStream()
-    });
-
-
-    // this.peer.getMedia({
-    //   audio: false,
-    //   video: false,
-    // }).then((stream) => {
-    //   this.videos.push({
-    //     username: this.username,
-    //     stream: stream
-    //   });
-    //   // this.myVideoStream = stream;
-
-    //   // this.peer.on('call', (call) => {
-    //   //   call.answer(stream);
-    //   //   call.on('stream', (userVideoStream) => {
-    //   //     // addVideoStream(video, userVideoStream);
-    //   //   });
-    //   // });
-    // });
+    this.videos.unshift(this.$parent.localUser);
+    console.log(this.videos)
   },
+  methods: {
+    getVideos() {
+      console.log(this.videos)
+      console.log(this.videos[0].stream.getTracks())
+    }
+  }
 }
 </script>
 
@@ -81,10 +60,16 @@ export default {
   border: 1px solid #0f0;
   aspect-ratio: 16/9;
 
+  >label {
+    z-index: 10;
+  }
+
   >* {
     position: absolute;
     bottom: 0;
     display: flex;
+    max-width: 100%;
+    max-height: 100%;
   }
 }
 </style>

@@ -10,7 +10,7 @@ let peer = new Peer({
 });
 
 
-const addVideoStream = (video, stream) => {
+const addVideoStreamToPage = (video, stream) => {
     video.srcObject = stream;
     video.addEventListener('loadedmetadata', () => {
         video.play();
@@ -22,28 +22,26 @@ const connectUser = (userId, stream) => {
     const call = peer.call(userId, stream);
     const video = document.createElement('video');
     call.on('stream', (userVideoStream) => {
-        addVideoStream(video, userVideoStream);
+        addVideoStreamToPage(video, userVideoStream);
     });
 };
-
-Geolocation.watchPosition();
 
 navigator.mediaDevices.getUserMedia({
     audio: false,
     video: true,
 }).then((stream) => {
     myVideoStream = stream;
-    addVideoStream(myVideo, stream);
+    addVideoStreamToPage(myVideo, stream);
 
     peer.on('call', (call) => {
         call.answer(stream);
         const video = document.createElement('video');
         call.on('stream', (userVideoStream) => {
-            addVideoStream(video, userVideoStream);
+            addVideoStreamToPage(video, userVideoStream);
         });
     });
 
-    socket.on('connect-user', (userId) => {
+    socket.on('connect-user-stream', (userId) => {
         connectUser(userId, stream);
     });
 });

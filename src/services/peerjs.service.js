@@ -4,16 +4,27 @@ class PeerjsService {
     peer;
     constructor() { }
 
-    setupPeerConnection(socket, roomId) {
+    setupPeerConnection() {
         this.peer = new Peer({
             path: process.env.VUE_APP_PEERJS_PATH,
             host: '/',
             port: process.env.VUE_APP_PEERJS_PORT,
         });
+    }
 
-        this.peer.on('open', (id) => {
-            console.log(id);
-            socket.emit('join_room', roomId, socket.id);
+    answerCall(stream) {
+        this.peer.on('call', (call) => {
+            call.answer(stream)
+            call.on('stream', (userVideoStream) => {
+                return userVideoStream
+            })
+        })
+    }
+
+    call(userId, stream) {
+        this.peer.call(userId, stream)
+        this.call.on('stream', (userVideoStream) => {
+            return userVideoStream
         })
     }
 
@@ -31,12 +42,6 @@ class PeerjsService {
             return stream
         } catch (e) {
             console.log('[ERROR]' + e)
-        }
-    }
-
-    call(userId, stream) {
-        if (this.peer) {
-            this.peer.call(userId, stream);
         }
     }
 

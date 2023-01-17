@@ -5,21 +5,20 @@
 
       <div class="controls">
         <button class="control-btn" id="toggle_camera" @click="toggleCamera"
-          :class="{ active: isCameraToggle }">Camera</button>
-        <button class="control-btn" id="toggle_micro" @click="isMicroToogle = !isMicroToogle"
-          :class="{ active: isMicroToogle }">Microphone</button>
+                :class="{ active: isCameraToggle }">Camera</button>
+        <button class="control-btn" id="toggle_micro" @click="toggleMicro"
+                :class="{ active: isMicroToogle }">Microphone</button>
         <button class="control-btn" id="toggle_chat" @click="isChachToogle = !isChachToogle"
-          :class="{ active: isChachToogle }">Chach</button>
+                :class="{ active: isChachToogle }">Chach</button>
         <button class="control-btn" id="room_invite">Invite</button>
         <button class="control-btn" id="room_leave" @click="leave">Leave</button>
       </div>
     </div>
 
-    <ChachItem :class="{ hidden: !isChachToogle }" :roomId="roomId" />
+    <ChachItem v-show="isChachToogle" :roomId="roomId" />
   </div>
 
 </template>
-
 <script>
 import peer from '../services/peerjs.service';
 import UserVideos from '@/components/UserVideos.vue';
@@ -27,40 +26,69 @@ import router from '@/router';
 
 export default {
   props: ['socket', 'roomId', 'username'],
+  created() {
+    peer.setupPeerConnection()
+    this.peer = peer;
+  },
   data() {
     return {
-      peer: peer,
+      peer: null,
       isCameraToggle: false,
       isMicroToogle: false,
-      isChachToogle: true
+      isChachToogle: true,
+      localUser: {
+        id: this.socket.getId(),
+        username: this.username,
+        stream: new MediaStream
+      }
     };
   },
   methods: {
     toggleCamera() {
       this.isCameraToggle = !this.isCameraToggle
       if (this.isCameraToggle) {
-        peer.getMedia({
+        this.peer.getMedia({
           video: this.isCameraToggle,
         }).then((stream) => {
-          this.myVideoStream = stream;
-
-          peer.on('call', (call) => {
-            call.answer(stream);
-            call.on('stream', (userVideoStream) => {
-              // addVideoStream(video, userVideoStream);
-            });
-          });
+          this.localUser.stream.addTrack(stream.getTracks()[0]);
+        });
+      } else {
+        this.localUser.stream.getVideoTracks().forEach(track => {
+          this.localUser.stream.removeTrack(track)
+          track.stop()
         });
       }
+      this.peer.answerCall(this.localUser.stream)
     },
+    toggleMicro() {
+      this.isMicroToogle = !this.isMicroToogle
+      if (this.isMicroToogle) {
+        this.peer.getMedia({
+          audio: this.isMicroToogle,
+        }).then((stream) => {
+          this.localUser.stream.addTrack(stream.getTracks()[0]);
+        });
+      } else {
+        this.localUser.stream.getAudioTracks().forEach(track => {
+          this.localUser.stream.removeTrack(track)
+          track.stop()
+        });
+      }
+      console.log(this.peer.answerCall(this.localUser.stream))
+
+    },
+
     leave() {
+      this.socket.leaveRoom(this.roomId)
       router.push({ name: 'login' });
     }
+  },
+  beforeUnmount() {
+    this.peer.disconnect();
   },
   components: { UserVideos }
 }
 </script>
-
 <style lang='scss'>
 // Main colors
 $color-text: #e2e2e2;

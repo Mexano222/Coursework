@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <form action="" id="login_form">
+    <form action="" id="login_form" @submit.prevent>
 
       <label for="username">Username</label>
       <input type="text" placeholder="Enter username" v-model="username" id="usename">
@@ -32,7 +32,6 @@ export default {
         return
       }
       if (!this.roomId) {
-        console.log(uuidv4())
         this.roomId = uuidv4()
       }
       this.socket.joinRoom(this.username, this.roomId)

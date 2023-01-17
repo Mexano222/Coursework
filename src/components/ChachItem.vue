@@ -3,7 +3,7 @@
     <div class="main-chat-wrapper">
       <div class="messages-wrapper">
         <div id="messages" ref="messagesDiv">
-          <div class="message" v-for="message in messages" :key="message">
+          <div class="message" v-for="message in messages" :key="message" ref="messages">
             <label class="username" v-if="message.username">
               {{ message.username + ': ' }}
             </label>
@@ -12,8 +12,7 @@
         </div>
       </div>
       <form id="form-message" action="" @submit.prevent>
-        <div id="input-message" placeholder="Message" autocomplete="off" contenteditable="true" ref="userInput"></div>
-        <!-- <textarea id="input-message" cols="30" rows="10" placeholder="Message" autocomplete="off" v-model="enteredMessage"></textarea> -->
+        <div id="input-message" placeholder="Message" contenteditable="true" ref="userInput"></div>
         <button class="send_btn" @click="sendMessage">send</button>
       </form>
     </div>
@@ -21,7 +20,7 @@
 </template>
 
 <script>
-import { thisExpression } from '@babel/types';
+import { nextTick } from 'vue'
 
 export default {
   props: ['roomId'],
@@ -35,27 +34,30 @@ export default {
     }
   },
   mounted() {
-    this.getMessages();
-  },
-  updated() {
-    this.$refs.messagesDiv.lastElementChild.scrollIntoView();
+    this.getMessages()
+    this.$refs.userInput.addEventListener('keydown', (e) => {
+      if (e.which === 13 && e.shiftKey === false) {
+        e.preventDefault()
+        this.sendMessage()
+      }
+    })
   },
   methods: {
     sendMessage() {
-      if (!this.enteredMessage) {
-        return;
+      if (!this.$refs.userInput.innerText) {
+        return
       }
-      this.$parent.socket.sendMessage(this.enteredMessage, this.roomId);
-      this.enteredMessage = null;
+      this.$parent.socket.sendMessage(this.$refs.userInput.innerText, this.roomId)
+      this.$refs.userInput.innerHTML = ''
     },
     getMessages() {
-      this.$parent.socket.subscribeToMessages((data) => {
-        data.id = this.messages.length;
-        this.messages.push(data);
-      });
-
+      this.$parent.socket.subscribeToMessages(async (data) => {
+        data.id = this.messages.length
+        this.messages.push(data)
+        await nextTick()
+        this.$refs.messages.slice(-1)[0].scrollIntoView()
+      })
     },
-
   },
 }
 </script>
@@ -113,8 +115,6 @@ $color-accent: #F2B0A5;
     box-sizing: border-box;
   }
 }
-
-
 
 .message {
   text-align: left;
