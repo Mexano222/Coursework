@@ -4,27 +4,33 @@ class PeerjsService {
     peer;
     constructor() { }
 
-    setupPeerConnection() {
-        this.peer = new Peer({
+    setupPeerConnection(id) {
+        this.peer = new Peer(id, {
             path: process.env.VUE_APP_PEERJS_PATH,
             host: '/',
             port: process.env.VUE_APP_PEERJS_PORT,
         });
     }
 
-    answerCall(stream) {
+    subscribeToCalls(cb) {
+        this.peer.on('call', (call) => {
+            return cb({ id: call.peer })
+        })
+    }
+
+    answerCall(stream, cb) {
         this.peer.on('call', (call) => {
             call.answer(stream)
             call.on('stream', (userVideoStream) => {
-                return userVideoStream
+                return cb({ id: call.peer, stream: userVideoStream })
             })
         })
     }
 
-    call(userId, stream) {
-        this.peer.call(userId, stream)
-        this.call.on('stream', (userVideoStream) => {
-            return userVideoStream
+    call(userId, stream, cb) {
+        const call = this.peer.call(userId, stream)
+        call.on('stream', (userVideoStream) => {
+            return cb({ id: call.peer, stream: userVideoStream })
         })
     }
 
@@ -38,7 +44,6 @@ class PeerjsService {
         let stream = null;
         try {
             stream = await navigator.mediaDevices.getUserMedia(constraints);
-            console.log(stream.getTracks())
             return stream
         } catch (e) {
             console.log('[ERROR]' + e)

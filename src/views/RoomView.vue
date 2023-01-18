@@ -4,30 +4,20 @@
       <UserVideos :username="username" :peer="peer" />
       <div class="controls">
         <button class="control-btn" id="toggle_camera" @click="toggleCamera" :class="{ active: isCameraToggle }">
-          <div class="camera-btn">
-            <img src="../assets/camera.svg" alt="camera picture" height="64" width="64" viewBox="0 0 64 64">
-          </div>
+          <img src="../assets/camera.svg" alt="camera picture" height="64" width="64" viewBox="0 0 64 64">
         </button>
         <button class="control-btn" id="toggle_micro" @click="toggleMicro" :class="{ active: isMicroToogle }">
-          <div class="micro-btn">
-            <img src="../assets/microphone.svg" alt="micro picture" height="64" width="64" viewBox="0 0 64 64">
-          </div>
+          <img src="../assets/microphone.svg" alt="micro picture" height="64" width="64" viewBox="0 0 64 64">
         </button>
         <button class="control-btn" id="toggle_chat" @click="isChachToogle = !isChachToogle"
-          :class="{ active: isChachToogle }">
-          <div class="chach-btn">
-            <img src="../assets/chat.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
-          </div>
+                :class="{ active: isChachToogle }">
+          <img src="../assets/chat.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
         </button>
         <button class="control-btn" id="room_invite">
-          <div class="invite-btn">
-            <img src="../assets/invite.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
-          </div>
+          <img src="../assets/invite.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
         </button>
         <button class="control-btn" id="room_leave" @click="leave">
-          <div class="leave-btn">
-            <img src="../assets/leave.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
-          </div>
+          <img src="../assets/leave.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
         </button>
       </div>
     </div>
@@ -44,7 +34,7 @@ import router from '@/router';
 export default {
   props: ['socket', 'roomId', 'username'],
   created() {
-    peer.setupPeerConnection()
+    peer.setupPeerConnection(this.socket.getId())
     this.peer = peer;
   },
   data() {
@@ -68,6 +58,7 @@ export default {
           video: this.isCameraToggle,
         }).then((stream) => {
           this.localUser.stream.addTrack(stream.getTracks()[0]);
+          this.socket.reconnectPeer(this.roomId)
         });
       } else {
         this.localUser.stream.getVideoTracks().forEach(track => {
@@ -75,7 +66,6 @@ export default {
           track.stop()
         });
       }
-      this.peer.answerCall(this.localUser.stream)
     },
     toggleMicro() {
       this.isMicroToogle = !this.isMicroToogle
@@ -84,6 +74,7 @@ export default {
           audio: this.isMicroToogle,
         }).then((stream) => {
           this.localUser.stream.addTrack(stream.getTracks()[0]);
+          this.socket.reconnectPeer(this.roomId)
         });
       } else {
         this.localUser.stream.getAudioTracks().forEach(track => {
@@ -91,17 +82,17 @@ export default {
           track.stop()
         });
       }
-      console.log(this.peer.answerCall(this.localUser.stream))
-
     },
 
     leave() {
       this.socket.leaveRoom(this.roomId)
+      this.localUser.stream.getTracks().forEach(track => {
+        this.localUser.stream.removeTrack(track)
+        track.stop()
+      });
       router.push({ name: 'login' });
+      this.peer.disconnect();
     }
-  },
-  beforeUnmount() {
-    this.peer.disconnect();
   },
   components: { UserVideos }
 }
@@ -114,6 +105,7 @@ $color-dark: #261421;
 $color-primary: #751A2C;
 $color-secondary: #AD6A6C;
 $color-accent: #F2B0A5;
+$filter-accent: invert(78%) sepia(10%) saturate(1124%) hue-rotate(320deg) brightness(93%) contrast(104%);
 
 .app-wrapper {
   display: flex;
@@ -136,6 +128,7 @@ $color-accent: #F2B0A5;
     flex: 1;
     min-width: 5%;
     word-wrap: break-word;
+    background-color: $color-dark;
 
     &.chach_visible {
       display: none;
@@ -152,8 +145,7 @@ $color-accent: #F2B0A5;
 
 .control-btn {
   box-sizing: border-box;
-
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   width: 80px;
@@ -168,6 +160,10 @@ $color-accent: #F2B0A5;
   &#room_leave {
     background-color: $color-primary;
   }
+
+  >img {
+    filter: $filter-accent
+  }
 }
 
 .active {
@@ -176,36 +172,6 @@ $color-accent: #F2B0A5;
 
 .hidden {
   display: none;
-}
-
-.camera-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.micro-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.chach-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.invite-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.leave-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 </style>
 

@@ -20,6 +20,14 @@ class SocketioService {
         this.socket.emit('leave_room', roomId)
     }
 
+    reconnectPeer(roomId) {
+        this.socket.emit('rejoin_room', roomId)
+    }
+
+    sendToServer(msg) {
+        this.socket.emit('msg', msg)
+    }
+
     disconnect() {
         if (this.socket) {
             this.socket.disconnect()
@@ -35,12 +43,27 @@ class SocketioService {
         })
     }
 
-    subscribeToStream(cb) {
+    subscribeToStreamConnect(cb) {
         if (!this.socket) {
             return false
         }
-        this.socket.on('connect_user', (username, stream) => {
-            return cb(username, stream)
+        this.socket.on('connect_user_stream', (userId, username) => {
+            return cb(userId, username)
+        })
+    }
+
+    subscribeToStreamDisconnect(cb) {
+        if (!this.socket) {
+            return false
+        }
+        this.socket.on('disconnect_user_stream', (userId) => {
+            return cb(userId)
+        })
+    }
+
+    subscribeToRestream(cb) {
+        this.socket.on('reconnect_user_stream', userId => {
+            return cb(userId)
         })
     }
 
@@ -48,6 +71,13 @@ class SocketioService {
         if (this.socket) {
             this.socket.emit('send_message', message, roomId, (cb) => { })
         }
+    }
+
+    getUsernameOf(userId, cb) {
+        this.socket.emit('get_username_ask', userId)
+        this.socket.on('get_username_resp', (id, username) => {
+            return cb(id, username)
+        })
     }
 
 }

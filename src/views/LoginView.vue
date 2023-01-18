@@ -50,6 +50,7 @@ $color-dark: #261421;
 $color-primary: #751A2C;
 $color-secondary: #AD6A6C;
 $color-accent: #F2B0A5;
+$filter-accent: invert(78%) sepia(10%) saturate(1124%) hue-rotate(320deg) brightness(93%) contrast(104%);
 
 input {
   width: 100%;
@@ -109,7 +110,6 @@ input {
   }
 
   button {
-    cursor: pointer;
     background-color: $color-primary;
   }
 }

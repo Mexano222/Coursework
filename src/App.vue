@@ -3,7 +3,9 @@
     <router-link to="/" id="logo">Discocrd</router-link>
   </header>
 
-  <router-view :socket="this.socket" />
+  <router-view :socket="this.socket" v-slot="{ Component }">
+    <component ref="view" :is="Component" />
+  </router-view>
 </template>
 <script>
 import SocketioService from './services/socketio.service';
@@ -14,9 +16,10 @@ export default {
   created() {
     SocketioService.setupSocketConnection();
     this.socket = SocketioService;
-  },
-  beforeUnmount() {
-    this.socket.disconnect();
+    window.addEventListener("beforeunload", (event) => {
+      this.$refs.view.$.ctx["leave"]()
+      this.socket.disconnect();
+    })
   },
   data() {
     return {
@@ -53,6 +56,10 @@ body {
   overflow: hidden;
 }
 
+button {
+  cursor: pointer;
+}
+
 #app {
   margin: 0;
   padding: 0;
@@ -73,5 +80,21 @@ header {
   color: $color-accent;
   text-decoration: none;
   padding: 10px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $color-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $color-accent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $color-secondary;
 }
 </style>

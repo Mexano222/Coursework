@@ -35,17 +35,28 @@ io.on('connection', (socket) => {
         socket.username = username;
         console.log("User [" + socket.id + "] " + socket.username + " connected to room " + roomId)
 
-        // socket.to(roomId).emit('connect-user-stream', userId);
+        socket.to(roomId).emit('connect_user_stream', { id: socket.id, username: socket.username });
+    });
+
+    socket.on('rejoin_room', (roomId) => {
+        console.log("User [" + socket.id + "] " + socket.username + " reconnected to room " + roomId)
+        socket.to(roomId).emit('reconnect_user_stream', { id: socket.id });
     });
 
     socket.on('leave_room', (roomId) => {
         console.log("User [" + socket.id + "] " + socket.username + " leave from room " + roomId)
+        socket.to(roomId).emit('disconnect_user_stream', { id: socket.id });
         socket.leave(roomId);
     });
 
     socket.on('send_message', (message, roomId) => {
         io.to(roomId).emit('load_message', { username: socket.username, message: message });
     });
+
+    socket.on('get_username_ask', (userId) => {
+        io.to(socket.id).emit('get_username_resp', { id: userId, username: io.sockets.sockets.get(userId).username });
+    });
+
 });
 
 http.listen(1337);

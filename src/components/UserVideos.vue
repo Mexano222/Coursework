@@ -1,35 +1,61 @@
 <template>
   <div class="video-wrapper">
     <div class="cam-wrapper" v-for="video in videos" :key="video.id"
-      :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(videos.length)) + ')' }">
-      <div class="user-cam" @click="getVideos">
+         :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(videos.length)) + ')' }">
+      <div class="user-cam">
         <label>{{ video.username }}</label>
-        <video v-if="video.stream" :srcObject.prop="video.stream" autoplay :muted="videos[0] === video" />
+        <video v-if="video.stream" :srcObject.prop="video.stream" autoplay :muted="videos[0] === video" ref="videos" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+// import { nextTick } from 'vue'
+
 export default {
   props: ['username', 'peer'],
   data() {
     return {
-      videos: [
-        { username: 123 },
-        { username: 123 },
-      ]
+      videos: []
     }
   },
-  mounted() {
-    this.peer.setupPeerConnection(this.socket)
-    this.videos.unshift(this.$parent.localUser);
-    console.log(this.videos)
+  created() {
+    this.videos.unshift(this.$parent.localUser)
+    this.getVideos()
   },
   methods: {
     getVideos() {
-      console.log(this.videos)
-      console.log(this.videos[0].stream.getTracks())
+      this.$parent.socket.subscribeToStreamConnect((data) => {
+        this.videos.push(data)
+        this.$parent.peer.call(data.id, this.videos[0].stream, data => {
+        })
+      })
+
+      this.$parent.socket.subscribeToStreamDisconnect((data) => {
+        let foundIndex = this.videos.findIndex(x => x.id == data.id)
+        if (foundIndex)
+          this.videos.splice(foundIndex, 1)
+      })
+
+      this.$parent.socket.subscribeToRestream((data) => {
+        this.$parent.peer.call(data.id, this.videos[0].stream, data => {
+        })
+      })
+
+      this.$parent.peer.subscribeToCalls(cb => {
+        if (this.videos.slice(1).findIndex(x => x.id == cb.id) >= 0)
+          return
+        this.$parent.socket.getUsernameOf(cb.id, data => {
+          this.videos.push(data)
+        })
+      })
+
+      this.$parent.peer.answerCall(this.videos[0].stream, data => {
+        let foundIndex = this.videos.findIndex(x => x.id == data.id)
+        if (foundIndex)
+          this.videos[foundIndex].stream = data.stream
+      })
     }
   }
 }
