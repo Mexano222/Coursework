@@ -8,19 +8,19 @@
   </router-view>
 </template>
 <script>
-import SocketioService from './services/socketio.service';
+import SocketioService from './services/socketio.service'
 
 export default {
   name: 'App',
   components: {},
-  created() {
-    SocketioService.setupSocketConnection();
-    this.socket = SocketioService;
-  },
   data() {
     return {
-      socket: SocketioService
+      socket: null
     }
+  },
+  created() {
+    SocketioService.setupSocketConnection()
+    this.socket = SocketioService
   }
 }
 </script>

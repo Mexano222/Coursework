@@ -1,53 +1,38 @@
 <template>
   <div class="app-wrapper">
     <div class="main-view">
-      <UserVideos :username="username" :peer="peer" v-if="isStreamLoaded" />
+      <UserVideos v-if="isStreamLoaded" :socket="socket" :peer="peer" :localUser="localUser" />
       <div v-else> Allow access to camera and microphone </div>
       <div class="controls">
         <button class="control-btn" id="toggle_camera" @click="toggleCamera" :class="{ active: isCameraToggle }">
-          <img src="../assets/camera.svg" alt="camera picture" height="64" width="64" viewBox="0 0 64 64">
+          <img src="../assets/camera.svg" alt="camera" height="64" width="64" viewBox="0 0 64 64">
         </button>
         <button class="control-btn" id="toggle_micro" @click="toggleMicro" :class="{ active: isMicroToogle }">
-          <img src="../assets/microphone.svg" alt="micro picture" height="64" width="64" viewBox="0 0 64 64">
+          <img src="../assets/microphone.svg" alt="microphone" height="64" width="64" viewBox="0 0 64 64">
         </button>
         <button class="control-btn" id="toggle_chat" @click="isChachToogle = !isChachToogle"
                 :class="{ active: isChachToogle }">
-          <img src="../assets/chat.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
+          <img src="../assets/chat.svg" alt="chat" height="64" width="64" viewBox="0 0 64 64">
         </button>
         <button class="control-btn" id="room_invite">
-          <img src="../assets/invite.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
+          <img src="../assets/invite.svg" alt="invite" height="64" width="64" viewBox="0 0 64 64">
         </button>
         <button class="control-btn" id="room_leave" @click="leave">
-          <img src="../assets/leave.svg" alt="invite picture" height="64" width="64" viewBox="0 0 64 64">
+          <img src="../assets/leave.svg" alt="leave" height="64" width="64" viewBox="0 0 64 64">
         </button>
       </div>
     </div>
 
-    <ChachItem v-show="isChachToogle" :roomId="roomId" />
+    <ChachItem v-show="isChachToogle" :socket="socket" :roomId="roomId" />
   </div>
 
 </template>
 <script>
-import peer from '../services/peerjs.service';
-import UserVideos from '@/components/UserVideos.vue';
-import router from '@/router';
+import peer from '../services/peerjs.service'
+import router from '@/router'
 
 export default {
-  props: ['socket', 'roomId', 'username', 'stream'],
-  created() {
-    peer.setupPeerConnection(this.socket.getId())
-    this.peer = peer;
-    this.peer.getMedia({
-      audio: true,
-      video: true
-    }).then((stream) => {
-      this.localUser.stream = stream
-      this.localUser.stream.getVideoTracks()[0].enabled = this.isCameraToggle
-      this.localUser.stream.getAudioTracks()[0].enabled = this.isMicroToogle
-      this.isStreamLoaded = true
-      this.socket.connectToPeer(this.roomId)
-    })
-  },
+  props: ['socket', 'roomId', 'username'],
   data() {
     return {
       peer: null,
@@ -60,7 +45,21 @@ export default {
         username: this.username,
         stream: null
       }
-    };
+    }
+  },
+  created() {
+    peer.setupPeerConnection(this.socket.getId())
+    this.peer = peer
+    this.peer.getMedia({
+      audio: true,
+      video: true
+    }).then((stream) => {
+      this.localUser.stream = stream
+      this.localUser.stream.getVideoTracks()[0].enabled = this.isCameraToggle
+      this.localUser.stream.getAudioTracks()[0].enabled = this.isMicroToogle
+      this.isStreamLoaded = true
+      this.socket.connectToPeer(this.roomId)
+    })
   },
   methods: {
     toggleCamera() {
@@ -71,18 +70,16 @@ export default {
       this.isMicroToogle = !this.isMicroToogle
       this.localUser.stream.getAudioTracks()[0].enabled = this.isMicroToogle
     },
-
     leave() {
       this.socket.leaveRoom(this.roomId)
       this.localUser.stream.getTracks().forEach(track => {
         this.localUser.stream.removeTrack(track)
         track.stop()
-      });
-      router.push({ name: 'login' });
-      this.peer.disconnect();
+      })
+      this.peer.disconnect()
+      router.push({ name: 'login' })
     }
-  },
-  components: { UserVideos }
+  }
 }
 </script>
 <style lang='scss'>

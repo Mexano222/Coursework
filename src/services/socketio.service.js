@@ -4,10 +4,6 @@ class SocketioService {
     socket
     constructor() { }
 
-    getId() {
-        return this.socket.id
-    }
-
     setupSocketConnection() {
         this.socket = io(process.env.VUE_APP_SOCKET_ENDPOINT)
     }
@@ -22,14 +18,6 @@ class SocketioService {
 
     leaveRoom(roomId) {
         this.socket.emit('leave_room', roomId)
-    }
-
-    reconnectPeer(roomId) {
-        this.socket.emit('rejoin_room', roomId)
-    }
-
-    sendToServer(msg) {
-        this.socket.emit('msg', msg)
     }
 
     disconnect() {
@@ -67,15 +55,12 @@ class SocketioService {
 
     sendMessage(message, roomId) {
         if (this.socket) {
-            this.socket.emit('send_message', message, roomId, (cb) => { })
+            this.socket.emit('send_message', message, roomId)
         }
     }
 
-    getUsernameOf(userId, cb) {
-        this.socket.emit('get_username_ask', userId)
-        this.socket.on('get_username_resp', (id, username) => {
-            return cb(id, username)
-        })
+    getId() {
+        return this.socket.id
     }
 
 }

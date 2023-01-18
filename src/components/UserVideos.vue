@@ -4,7 +4,7 @@
          :style="{ flex: '0 0 calc(100%/' + Math.ceil(Math.sqrt(videos.length)) + ')' }">
       <div class="user-cam">
         <label>{{ video.username }}</label>
-        <video v-if="video.stream" :srcObject.prop="video.stream" autoplay :muted="videos[0] === video" ref="videos" />
+        <video v-if="video.stream" :srcObject.prop="video.stream" autoplay :muted="videos[0] === video" />
       </div>
     </div>
   </div>
@@ -12,45 +12,36 @@
 
 <script>
 export default {
-  props: ['username', 'peer'],
+  props: ['socket', 'peer', 'localUser'],
   data() {
     return {
       videos: []
     }
   },
-  mounted() {
-    this.videos.unshift(this.$parent.localUser)
+  created() {
+    this.videos.unshift(this.localUser)
     this.getVideos()
   },
   methods: {
     getVideos() {
-      this.$parent.socket.subscribeToStreamConnect((data) => {
+      this.socket.subscribeToStreamConnect((data) => {
         this.videos.push(data)
-        this.peer.call(data.id, this.$parent.localUser.stream, data => {
+        this.peer.makeCall(data.id, this.localUser, data => {
           let foundIndex = this.findIndexById(this.videos, data.id)
           if (foundIndex) this.videos[foundIndex].stream = data.stream
         })
       })
 
-      this.$parent.socket.subscribeToStreamDisconnect((data) => {
+      this.socket.subscribeToStreamDisconnect((data) => {
         let foundIndex = this.findIndexById(this.videos, data.id)
         if (foundIndex) this.videos.splice(foundIndex, 1)
       })
 
-      this.peer.subscribeToCalls(cb => {
-        if (this.findIndexById(this.videos.slice(1), cb.id) >= 0)
+      this.peer.answerCall(this.localUser.stream, data => {
+        console.log(data)
+        if (this.findIndexById(this.videos.slice(1), data.id) >= 0)
           return;
-        this.$parent.socket.getUsernameOf(cb.id, data => {
-          if (this.findIndexById(this.videos.slice(1), data.id) >= 0)
-            return;
-          this.videos.push(data)
-          this.$forceUpdate();
-        })
-      })
-
-      this.peer.answerCall(this.$parent.localUser.stream, data => {
-        let foundIndex = this.findIndexById(this.videos, data.id)
-        if (foundIndex) this.videos[foundIndex].stream = data.stream
+        this.videos.push(data)
       })
     },
     findIndexById(videos, id) {

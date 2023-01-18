@@ -2,27 +2,15 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 
-const { v4: uuidv4 } = require('uuid');
-
 const io = require('socket.io')(http, {
     cors: {
         origins: ['http://localhost:8080']
     }
 });
-const siofu = require('socketio-file-upload')
-var fs = require('fs')
 
 const { ExpressPeerServer } = require('peer');
-const { callbackify } = require('util');
-const peerServer = ExpressPeerServer(http, {
-    debug: true
-});
-
-// Client imports
+const peerServer = ExpressPeerServer(http);
 app.use('/peerjs', peerServer);
-app.use('/node_modules', express.static(__dirname + '/node_modules/'))
-app.use(express.static('public'));
-app.use(siofu.router);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -49,11 +37,6 @@ io.on('connection', (socket) => {
 
     socket.on('send_message', (message, roomId) => {
         io.to(roomId).emit('load_message', { username: socket.username, message: message });
-    });
-
-    socket.on('get_username_ask', (userId) => {
-        console.log(socket.id + " asks for " + userId + " username")
-        io.to(socket.id).emit('get_username_resp', { id: userId, username: io.sockets.sockets.get(userId).username });
     });
 
 });

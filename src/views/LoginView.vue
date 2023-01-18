@@ -1,12 +1,10 @@
 <template>
   <div class="login">
     <form action="" id="login_form" @submit.prevent>
-
       <label for="username">Username</label>
       <input type="text" placeholder="Enter username" v-model="username" id="usename">
       <label for="room_id">Room ID</label>
-      <input type="text" placeholder="Enter room id" v-model="roomId" id="room_id">
-
+      <input type="text" placeholder="Enter room ID" v-model="roomId" id="room_id">
       <button @click="joinRoom" id="join_btn">Join</button>
     </form>
   </div>
@@ -14,7 +12,7 @@
 
 
 <script>
-import router from '@/router';
+import router from '@/router'
 import { v4 as uuidv4 } from 'uuid'
 
 export default {
@@ -22,8 +20,7 @@ export default {
   data() {
     return {
       username: null,
-      myVideoStream: null,
-      roomId: null,
+      roomId: null
     }
   },
   methods: {
@@ -35,7 +32,7 @@ export default {
         this.roomId = uuidv4()
       }
       this.socket.joinRoom(this.username, this.roomId)
-      router.push({ name: 'room', params: { roomId: this.roomId, username: this.username } });
+      router.push({ name: 'room', params: { roomId: this.roomId, username: this.username } })
     }
   }
 }

@@ -12,32 +12,19 @@ class PeerjsService {
         });
     }
 
-    subscribeToCalls(cb) {
-        this.peer.on('call', (call) => {
-            return cb({ id: call.peer })
-        })
-    }
-
     answerCall(stream, cb) {
         this.peer.on('call', (call) => {
-            console.log("answer")
-            console.log(call)
-            console.log(stream)
             call.answer(stream)
             call.on('stream', (userVideoStream) => {
-                console.log(userVideoStream)
-                return cb({ id: call.peer, stream: userVideoStream })
+                return cb({ id: call.peer, username: call.metadata.username, stream: userVideoStream })
             })
         })
     }
 
-    call(userId, stream, cb) {
-        const call = this.peer.call(userId, stream)
-        console.log("call")
-        console.log(call)
-        console.log(stream)
+    makeCall(userId, localUser, cb) {
+        const call = this.peer.call(userId, localUser.stream)
+        call.metadata = { username: localUser.username }
         call.on('stream', (userVideoStream) => {
-            console.log(userVideoStream)
             return cb({ id: call.peer, stream: userVideoStream })
         })
     }
@@ -49,10 +36,8 @@ class PeerjsService {
     }
 
     async getMedia(constraints) {
-        let stream = null;
         try {
-            stream = await navigator.mediaDevices.getUserMedia(constraints);
-            return stream
+            return await navigator.mediaDevices.getUserMedia(constraints);
         } catch (e) {
             console.log('[ERROR]' + e)
         }

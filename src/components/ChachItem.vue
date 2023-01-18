@@ -25,13 +25,10 @@
 import { nextTick } from 'vue'
 
 export default {
-  props: ['roomId'],
+  props: ['socket', 'roomId'],
   data() {
     return {
-      enteredMessage: null,
-      messages: [
-        { id: 0, message: 'Welcome to room ' + this.roomId },
-      ],
+      messages: [{ id: 0, message: 'Welcome to room ' + this.roomId }],
       isOpen: true
     }
   },
@@ -49,11 +46,11 @@ export default {
       if (!this.$refs.userInput.innerText) {
         return
       }
-      this.$parent.socket.sendMessage(this.$refs.userInput.innerText, this.roomId)
+      this.socket.sendMessage(this.$refs.userInput.innerText, this.roomId)
       this.$refs.userInput.innerHTML = ''
     },
     getMessages() {
-      this.$parent.socket.subscribeToMessages(async (data) => {
+      this.socket.subscribeToMessages(async (data) => {
         data.id = this.messages.length
         this.messages.push(data)
         await nextTick()

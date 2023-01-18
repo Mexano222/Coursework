@@ -22,7 +22,6 @@
     "peerjs": "^1.4.7",
     "socket.io": "^4.5.4",
     "socket.io-client": "^4.5.4",
-    "socketio-file-upload": "^0.7.3",
     "uuid": "^9.0.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"
