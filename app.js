@@ -34,14 +34,12 @@ io.on('connection', (socket) => {
         socket.join(roomId);
         socket.username = username;
         console.log("User [" + socket.id + "] " + socket.username + " connected to room " + roomId)
+    });
 
+    socket.on('connect_to_peer', (roomId) => {
+        console.log("User [" + socket.id + "] " + socket.username + " connected to peer in room " + roomId)
         socket.to(roomId).emit('connect_user_stream', { id: socket.id, username: socket.username });
-    });
-
-    socket.on('rejoin_room', (roomId) => {
-        console.log("User [" + socket.id + "] " + socket.username + " reconnected to room " + roomId)
-        socket.to(roomId).emit('reconnect_user_stream', { id: socket.id });
-    });
+    })
 
     socket.on('leave_room', (roomId) => {
         console.log("User [" + socket.id + "] " + socket.username + " leave from room " + roomId)
@@ -54,6 +52,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('get_username_ask', (userId) => {
+        console.log(socket.id + " asks for " + userId + " username")
         io.to(socket.id).emit('get_username_resp', { id: userId, username: io.sockets.sockets.get(userId).username });
     });
 

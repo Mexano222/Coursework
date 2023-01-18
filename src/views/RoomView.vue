@@ -1,7 +1,8 @@
 <template>
   <div class="app-wrapper">
     <div class="main-view">
-      <UserVideos :username="username" :peer="peer" />
+      <UserVideos :username="username" :peer="peer" v-if="isStreamLoaded" />
+      <div v-else> Allow access to camera and microphone </div>
       <div class="controls">
         <button class="control-btn" id="toggle_camera" @click="toggleCamera" :class="{ active: isCameraToggle }">
           <img src="../assets/camera.svg" alt="camera picture" height="64" width="64" viewBox="0 0 64 64">
@@ -32,56 +33,43 @@ import UserVideos from '@/components/UserVideos.vue';
 import router from '@/router';
 
 export default {
-  props: ['socket', 'roomId', 'username'],
+  props: ['socket', 'roomId', 'username', 'stream'],
   created() {
     peer.setupPeerConnection(this.socket.getId())
     this.peer = peer;
+    this.peer.getMedia({
+      audio: true,
+      video: true
+    }).then((stream) => {
+      this.localUser.stream = stream
+      this.localUser.stream.getVideoTracks()[0].enabled = this.isCameraToggle
+      this.localUser.stream.getAudioTracks()[0].enabled = this.isMicroToogle
+      this.isStreamLoaded = true
+      this.socket.connectToPeer(this.roomId)
+    })
   },
   data() {
     return {
       peer: null,
+      isStreamLoaded: false,
       isCameraToggle: false,
       isMicroToogle: false,
       isChachToogle: true,
       localUser: {
         id: this.socket.getId(),
         username: this.username,
-        stream: new MediaStream
+        stream: null
       }
     };
   },
   methods: {
     toggleCamera() {
       this.isCameraToggle = !this.isCameraToggle
-      if (this.isCameraToggle) {
-        this.peer.getMedia({
-          video: this.isCameraToggle,
-        }).then((stream) => {
-          this.localUser.stream.addTrack(stream.getTracks()[0]);
-          this.socket.reconnectPeer(this.roomId)
-        });
-      } else {
-        this.localUser.stream.getVideoTracks().forEach(track => {
-          this.localUser.stream.removeTrack(track)
-          track.stop()
-        });
-      }
+      this.localUser.stream.getVideoTracks()[0].enabled = this.isCameraToggle
     },
     toggleMicro() {
       this.isMicroToogle = !this.isMicroToogle
-      if (this.isMicroToogle) {
-        this.peer.getMedia({
-          audio: this.isMicroToogle,
-        }).then((stream) => {
-          this.localUser.stream.addTrack(stream.getTracks()[0]);
-          this.socket.reconnectPeer(this.roomId)
-        });
-      } else {
-        this.localUser.stream.getAudioTracks().forEach(track => {
-          this.localUser.stream.removeTrack(track)
-          track.stop()
-        });
-      }
+      this.localUser.stream.getAudioTracks()[0].enabled = this.isMicroToogle
     },
 
     leave() {

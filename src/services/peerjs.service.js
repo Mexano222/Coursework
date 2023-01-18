@@ -20,8 +20,12 @@ class PeerjsService {
 
     answerCall(stream, cb) {
         this.peer.on('call', (call) => {
+            console.log("answer")
+            console.log(call)
+            console.log(stream)
             call.answer(stream)
             call.on('stream', (userVideoStream) => {
+                console.log(userVideoStream)
                 return cb({ id: call.peer, stream: userVideoStream })
             })
         })
@@ -29,7 +33,11 @@ class PeerjsService {
 
     call(userId, stream, cb) {
         const call = this.peer.call(userId, stream)
+        console.log("call")
+        console.log(call)
+        console.log(stream)
         call.on('stream', (userVideoStream) => {
+            console.log(userVideoStream)
             return cb({ id: call.peer, stream: userVideoStream })
         })
     }

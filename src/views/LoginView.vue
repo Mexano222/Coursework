@@ -23,7 +23,7 @@ export default {
     return {
       username: null,
       myVideoStream: null,
-      roomId: null
+      roomId: null,
     }
   },
   methods: {

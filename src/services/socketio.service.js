@@ -16,6 +16,10 @@ class SocketioService {
         this.socket.emit('join_room', username, roomId)
     }
 
+    connectToPeer(roomId) {
+        this.socket.emit('connect_to_peer', roomId)
+    }
+
     leaveRoom(roomId) {
         this.socket.emit('leave_room', roomId)
     }
@@ -57,12 +61,6 @@ class SocketioService {
             return false
         }
         this.socket.on('disconnect_user_stream', (userId) => {
-            return cb(userId)
-        })
-    }
-
-    subscribeToRestream(cb) {
-        this.socket.on('reconnect_user_stream', userId => {
             return cb(userId)
         })
     }

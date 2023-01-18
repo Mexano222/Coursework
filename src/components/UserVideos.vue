@@ -11,8 +11,6 @@
 </template>
 
 <script>
-// import { nextTick } from 'vue'
-
 export default {
   props: ['username', 'peer'],
   data() {
@@ -20,7 +18,7 @@ export default {
       videos: []
     }
   },
-  created() {
+  mounted() {
     this.videos.unshift(this.$parent.localUser)
     this.getVideos()
   },
@@ -28,34 +26,35 @@ export default {
     getVideos() {
       this.$parent.socket.subscribeToStreamConnect((data) => {
         this.videos.push(data)
-        this.$parent.peer.call(data.id, this.videos[0].stream, data => {
+        this.peer.call(data.id, this.$parent.localUser.stream, data => {
+          let foundIndex = this.findIndexById(this.videos, data.id)
+          if (foundIndex) this.videos[foundIndex].stream = data.stream
         })
       })
 
       this.$parent.socket.subscribeToStreamDisconnect((data) => {
-        let foundIndex = this.videos.findIndex(x => x.id == data.id)
-        if (foundIndex)
-          this.videos.splice(foundIndex, 1)
+        let foundIndex = this.findIndexById(this.videos, data.id)
+        if (foundIndex) this.videos.splice(foundIndex, 1)
       })
 
-      this.$parent.socket.subscribeToRestream((data) => {
-        this.$parent.peer.call(data.id, this.videos[0].stream, data => {
-        })
-      })
-
-      this.$parent.peer.subscribeToCalls(cb => {
-        if (this.videos.slice(1).findIndex(x => x.id == cb.id) >= 0)
-          return
+      this.peer.subscribeToCalls(cb => {
+        if (this.findIndexById(this.videos.slice(1), cb.id) >= 0)
+          return;
         this.$parent.socket.getUsernameOf(cb.id, data => {
+          if (this.findIndexById(this.videos.slice(1), data.id) >= 0)
+            return;
           this.videos.push(data)
+          this.$forceUpdate();
         })
       })
 
-      this.$parent.peer.answerCall(this.videos[0].stream, data => {
-        let foundIndex = this.videos.findIndex(x => x.id == data.id)
-        if (foundIndex)
-          this.videos[foundIndex].stream = data.stream
+      this.peer.answerCall(this.$parent.localUser.stream, data => {
+        let foundIndex = this.findIndexById(this.videos, data.id)
+        if (foundIndex) this.videos[foundIndex].stream = data.stream
       })
+    },
+    findIndexById(videos, id) {
+      return videos.findIndex(x => x.id == id)
     }
   }
 }

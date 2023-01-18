@@ -16,10 +16,6 @@ export default {
   created() {
     SocketioService.setupSocketConnection();
     this.socket = SocketioService;
-    window.addEventListener("beforeunload", (event) => {
-      this.$refs.view.$.ctx["leave"]()
-      this.socket.disconnect();
-    })
   },
   data() {
     return {
