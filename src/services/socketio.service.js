@@ -35,6 +35,10 @@ class SocketioService {
         })
     }
 
+    unsubscribeFromMessages() {
+        this.socket.removeListener('load_message');
+    }
+
     subscribeToStreamConnect(cb) {
         if (!this.socket) {
             return false

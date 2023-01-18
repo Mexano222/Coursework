@@ -2,7 +2,7 @@
   <div class="main-chat">
     <div class="main-chat-wrapper">
       <div class="messages-wrapper">
-        <div id="messages" ref="messagesDiv">
+        <div id="messages">
           <div class="message" v-for="message in messages" :key="message" ref="messages">
             <label class="username" v-if="message.username">
               {{ message.username + ': ' }}
@@ -41,6 +41,9 @@ export default {
       }
     })
   },
+  beforeUnmount() {
+    this.socket.unsubscribeFromMessages()
+  },
   methods: {
     sendMessage() {
       if (!this.$refs.userInput.innerText) {
@@ -51,10 +54,9 @@ export default {
     },
     getMessages() {
       this.socket.subscribeToMessages(async (data) => {
-        data.id = this.messages.length
-        this.messages.push(data)
+        let length = this.messages.push(data)
         await nextTick()
-        this.$refs.messages.slice(-1)[0].scrollIntoView()
+        this.$refs.messages[--length].scrollIntoView()
       })
     },
   },

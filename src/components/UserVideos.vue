@@ -38,7 +38,6 @@ export default {
       })
 
       this.peer.answerCall(this.localUser.stream, data => {
-        console.log(data)
         if (this.findIndexById(this.videos.slice(1), data.id) >= 0)
           return;
         this.videos.push(data)
