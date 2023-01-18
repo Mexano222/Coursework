@@ -78,12 +78,17 @@ export default {
   border: 1px solid #0f0;
   aspect-ratio: 16/9;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
   >label {
     z-index: 10;
+
+    position: absolute;
   }
 
   >* {
-    position: absolute;
+    //position: absolute;
     bottom: 0;
     display: flex;
     max-width: 100%;

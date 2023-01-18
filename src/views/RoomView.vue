@@ -128,6 +128,10 @@ $filter-accent: invert(78%) sepia(10%) saturate(1124%) hue-rotate(320deg) bright
   align-items: center;
 }
 
+.controls:focus {
+    outline: none;
+  }
+
 .control-btn {
   box-sizing: border-box;
   display: flex;
