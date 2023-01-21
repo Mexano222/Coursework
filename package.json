@@ -4,12 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "concurrently --kill-others \"nodemon app.js\" \"vue-cli-service serve\"",
-    "back": "node app.js",
-    "front": "vue-cli-service serve",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "nodemon app.js",
+    "build": "node app.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,49 +13,8 @@
     "core-js": "^3.8.3",
     "express": "^4.18.2",
     "nodemon": "^2.0.20",
-    "normalize.css": "^8.0.1",
     "peer": "^0.6.1",
-    "peerjs": "^1.4.7",
     "socket.io": "^4.5.4",
-    "socket.io-client": "^4.5.4",
-    "uuid": "^9.0.0",
-    "vue": "^3.2.13",
-    "vue-router": "^4.0.3"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-router": "^5.0.8",
-    "@vue/cli-service": "~5.0.0",
-    "concurrently": "^7.6.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "fibers": "^5.0.3",
-    "sass": "^1.57.1",
-    "sass-loader": "^13.2.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
-    "rules": {
-      "no-unused-vars": "off"
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ]
+    "uuid": "^9.0.0"
+  }
 }
