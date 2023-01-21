@@ -4,7 +4,10 @@ const http = require('http').createServer(app);
 
 const io = require('socket.io')(http, {
     cors: {
-        origins: ['http://localhost:8080']
+        origins: [
+            'http://localhost:8080',
+            'https://kursach.pages.dev/'
+        ]
     }
 });
 

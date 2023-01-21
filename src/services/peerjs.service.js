@@ -7,7 +7,7 @@ class PeerjsService {
     setupPeerConnection(id) {
         this.peer = new Peer(id, {
             path: process.env.VUE_APP_PEERJS_PATH,
-            host: '/',
+            host: process.env.VUE_APP_PEERJS_HOST,
             port: process.env.VUE_APP_PEERJS_PORT,
         });
     }
