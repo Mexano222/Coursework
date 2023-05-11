@@ -1,4 +1,6 @@
-# Client for course app
+# video/text chat app that uses peer2peer connection
+
+this is client part. Backend on another branch
 
 ## Project setup
 ```
